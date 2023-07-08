@@ -68,7 +68,7 @@ class RCHandler {
         ClearWorkingImageDirectory();
 
         _s3TransferUtility.DownloadDirectory(
-                "objectreconstructionimages",
+                "finishedmodels222241-dev",
                 "/public/" + deser["Folder"],
                 "C:/Users/domin/Desktop/TETETET/Images"
             );
