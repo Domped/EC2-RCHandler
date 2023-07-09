@@ -14,9 +14,10 @@ using Amazon.StepFunctions.Model;
 using Newtonsoft.Json;
 
 class RCHandler {
-    private static string URL = "https://sqs.eu-central-1.amazonaws.com/803864580155/EC2Work";
+    private static string URL = "https://sqs.eu-central-1.amazonaws.com/803864580155/EC2Fifo.fifo";
     // private static string URL = "https://sqs.eu-central-1.amazonaws.com/816971564981/EC2Work";
 
+    private static string PATH = "C:/Users/mbudy/Desktop/CalculateTextured3DModel/";
     private static readonly AmazonStepFunctionsClient _stepClient = new AmazonStepFunctionsClient();
     private static readonly AmazonS3Client _s3BucketClient = new AmazonS3Client();
     private static readonly TransferUtility _s3TransferUtility = new TransferUtility();
@@ -46,12 +47,12 @@ class RCHandler {
 
     private static void ClearWorkingImageDirectory() {
         
-        DirectoryInfo di = new DirectoryInfo("C:/Users/domin/Desktop/TETETET/Images");
+        DirectoryInfo di = new DirectoryInfo(PATH + "Images");
         foreach (FileInfo file in di.GetFiles()) {
             file.Delete(); 
         }
         
-        di = new DirectoryInfo("C:/Users/domin/Desktop/TETETET/Model");
+        di = new DirectoryInfo(PATH + "Model");
         foreach (FileInfo file in di.GetFiles()) {
             file.Delete(); 
         }
@@ -70,18 +71,18 @@ class RCHandler {
         _s3TransferUtility.DownloadDirectory(
                 "finishedmodels222241-dev",
                 "/public/" + deser["Folder"],
-                "C:/Users/domin/Desktop/TETETET/Images"
+                PATH + "Images"
             );
 
         var startInfo = new ProcessStartInfo();
-        startInfo.FileName = "C:/Users/domin/Desktop/TETETET/_ProcessAll.bat";
-        startInfo.WorkingDirectory = "C:/Users/domin/Desktop/TETETET";
+        startInfo.FileName = PATH + "_ProcessAll.bat";
+        startInfo.WorkingDirectory = PATH;
         
         var rc = Process.Start(startInfo);
         rc?.WaitForExit();
         
         _s3TransferUtility.UploadDirectory(
-            "C:/Users/domin/Desktop/TETETET/Model/",
+            PATH + "Model",
             "finishedhelmetmodels/"+ deser["Folder"]
         );
         
