@@ -17,7 +17,7 @@ class RCHandler {
     private static string URL = "https://sqs.eu-central-1.amazonaws.com/803864580155/EC2Fifo.fifo";
     // private static string URL = "https://sqs.eu-central-1.amazonaws.com/816971564981/EC2Work";
 
-    private static string PATH = "C:/Users/mbudy/Desktop/CalculateTextured3DModel/";
+    private static string PATH = "C:/Users/mbudy/Desktop/RCScripts/";
     private static readonly AmazonStepFunctionsClient _stepClient = new AmazonStepFunctionsClient();
     private static readonly AmazonS3Client _s3BucketClient = new AmazonS3Client();
     private static readonly TransferUtility _s3TransferUtility = new TransferUtility();
@@ -52,7 +52,12 @@ class RCHandler {
             file.Delete(); 
         }
         
-        di = new DirectoryInfo(PATH + "Model");
+        di = new DirectoryInfo(PATH + "Models");
+        foreach (FileInfo file in di.GetFiles()) {
+            file.Delete(); 
+        }
+        
+        di = new DirectoryInfo(PATH + "Projects");
         foreach (FileInfo file in di.GetFiles()) {
             file.Delete(); 
         }
@@ -75,14 +80,17 @@ class RCHandler {
             );
 
         var startInfo = new ProcessStartInfo();
-        startInfo.FileName = PATH + "_ProcessAll.bat";
+        startInfo.FileName = PATH + "Scripts/HeadReconstruction.bat";
         startInfo.WorkingDirectory = PATH;
-        
+        startInfo.UseShellExecute = true;
         var rc = Process.Start(startInfo);
         rc?.WaitForExit();
         
+        //TODO: ERror checking
+        
+        
         _s3TransferUtility.UploadDirectory(
-            PATH + "Model",
+            PATH + "Models",
             "finishedhelmetmodels/"+ deser["Folder"]
         );
         
